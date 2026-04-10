@@ -1,0 +1,6 @@
+credentials.json
+bin/bxfpdf-bin
+*.gem
+.env
+pkg/
+tmp/

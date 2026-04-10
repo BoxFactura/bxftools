@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+require "bxftools"
+
+path = Bxftools::BinaryManager.ensure_binary!
+
+unless path
+  warn "[bxftools] bxfpdf binary not available"
+  exit 1
+end
+
+exec(path, *ARGV)
