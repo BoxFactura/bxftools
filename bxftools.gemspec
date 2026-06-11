@@ -8,10 +8,11 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 3.1"
 
-  s.files = Dir["lib/**/*", "bin/*", "credentials.enc", "LICENSE", "README.md"]
+  s.files = Dir["lib/**/*", "bin/*", "captcha/*", "credentials.enc", "LICENSE", "README.md"]
   s.executables << "bxfpdf"
 
   s.require_paths = ["lib"]
 
   s.add_dependency "base64"
+  s.add_dependency "dotenv"
 end
