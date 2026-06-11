@@ -1,3 +1,4 @@
+require "dotenv/load"
 require "bundler/gem_tasks"
 require "rake/testtask"
 

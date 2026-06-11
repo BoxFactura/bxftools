@@ -3,7 +3,6 @@ PATH
   specs:
     bxftools (0.1.0)
       base64
-      dotenv
 
 GEM
   remote: https://rubygems.org/
@@ -36,6 +35,7 @@ PLATFORMS
 
 DEPENDENCIES
   bxftools!
+  dotenv
   minitest
   rake
   webmock

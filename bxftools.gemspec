@@ -14,5 +14,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency "base64"
-  s.add_dependency "dotenv"
+
+  s.add_development_dependency "dotenv"
 end
