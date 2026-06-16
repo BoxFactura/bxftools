@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 3.1"
 
-  s.files = Dir["lib/**/*", "bin/bxfpdf", "bin/bxfunar", "bin/unar/*.gz", "captcha/*", "credentials.enc", "LICENSE", "README.md"]
+  s.files = Dir["lib/**/*", "bin/bxfpdf", "bin/bxfunar", "bin/bxfunar-*.tar.gz", "captcha/*", "credentials.enc", "LICENSE", "README.md"]
   s.executables << "bxfpdf"
   s.executables << "bxfunar"
 

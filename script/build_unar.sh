@@ -1,39 +1,41 @@
 #!/usr/bin/env bash
 #
-# Rebuilds bin/unar/*.gz from Ubuntu 24.04 (requires Docker).
+# Rebuilds the bundled unar payload from Ubuntu 24.04 (requires Docker).
 #
-# Ships the `unar` binary plus only the GNUstep Objective-C runtime it needs
-# (libgnustep-base, libobjc) -- the libraries a stock host never has. Everything
-# else unar links (libicu74, libxml2, libxslt, libdbus, libavahi) is resolved
-# from the host at runtime and is deliberately NOT bundled, keeping the payload
-# lean. This works because we pin to 24.04, whose native lib versions match.
+# Produces a single consolidated archive named like bxfzip's binaries:
+#   bin/bxfunar-ubuntu-24.04_amd64.tar.gz
+#
+# It carries the `unar` binary plus only the GNUstep Objective-C runtime it
+# needs (libgnustep-base, libobjc) -- the libraries a stock host never has.
+# Everything else unar links (libicu74, libxml2, libxslt, libdbus, libavahi) is
+# resolved from the host at runtime and is deliberately NOT bundled, keeping the
+# payload lean. This works because we pin to 24.04, whose native libs match.
 #
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
-OUT="bin/unar"
+SUFFIX="ubuntu-24.04_amd64"
+ARCHIVE="bxfunar-${SUFFIX}.tar.gz"
 
-# Regenerate from scratch so stale files never get re-compressed into *.gz.gz.
-rm -rf "$OUT"
-mkdir -p "$OUT"
+# Regenerate from scratch: drop any prior archive and expanded payload dir.
+rm -f "bin/${ARCHIVE}"
+rm -rf "bin/bxfunar-${SUFFIX}"
 
-docker run --rm -v "$PWD/$OUT:/out" ubuntu:24.04 bash -euc '
+docker run --rm -v "$PWD/bin:/out" ubuntu:24.04 bash -euc '
   apt-get update -qq
   DEBIAN_FRONTEND=noninteractive apt-get install -y -qq unar >/dev/null
 
-  # Copy unar plus only the GNUstep libs it requests, naming each file after
-  # the soname the binary actually looks up (the left side of `ldd`).
-  install -m755 -T /usr/bin/unar /out/unar
+  work=$(mktemp -d)
+  # unar (executable) plus only the GNUstep libs it requests, each named after
+  # the soname the binary looks up (the left side of `ldd`).
+  install -m755 -T /usr/bin/unar "$work/unar"
   ldd /usr/bin/unar | awk "/libgnustep-base|libobjc/ {print \$1, \$3}" | while read -r soname path; do
-    install -m644 -T "$path" "/out/$soname"
+    install -m644 -T "$path" "$work/$soname"
   done
 
-  chown -R '"$(id -u):$(id -g)"' /out
+  ( cd "$work" && tar -czf "/out/'"${ARCHIVE}"'" unar lib* )
+  chown '"$(id -u):$(id -g)"' "/out/'"${ARCHIVE}"'"
 '
 
-# Compress every freshly-installed file; the dir contains only these three.
-gzip -9 "$OUT"/*
-
-echo "Wrote lean unar payload:"
-ls -la "$OUT"/*.gz
-du -sh "$OUT"
+echo "Wrote consolidated unar payload:"
+ls -la "bin/${ARCHIVE}"
