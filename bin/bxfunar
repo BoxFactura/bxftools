@@ -1,5 +1,16 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
-require "bxftools"
+# CLI launcher for the bundled unar, mirroring zip-preview's bxfzip script.
+#
+# Works both as the installed gem executable and when run straight from a
+# checkout (./bin/bxfunar archive.zip). On first use it picks the right
+# bxfunar-<suffix>.tar.gz, expands it in place, then execs unar with the
+# bundled GNUstep libraries on LD_LIBRARY_PATH -- everything happens
+# automatically, no separate deflate step.
+lib = File.expand_path("../lib", __dir__)
+$LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
+
+require "bxftools/unar"
 
 Bxftools::Unar.exec!(ARGV)
