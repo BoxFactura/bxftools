@@ -9,6 +9,13 @@ end
 
 task default: :test
 
+namespace :unar do
+  desc "Rebuild the bundled unar payload from Ubuntu 24.04 (requires Docker)"
+  task :build do
+    sh File.expand_path("script/build_unar.sh", __dir__)
+  end
+end
+
 namespace :credentials do
   desc "Generate a new encryption key (save this securely, share via BXFTOOLS_KEY env var)"
   task :generate_key do

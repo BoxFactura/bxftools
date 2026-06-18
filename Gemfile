@@ -6,4 +6,5 @@ group :development, :test do
   gem "rake"
   gem "minitest"
   gem "webmock"
+  gem "rubocop-rails-omakase", require: false
 end

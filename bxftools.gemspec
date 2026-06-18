@@ -3,15 +3,16 @@ Gem::Specification.new do |s|
   s.version     = "0.1.0"
   s.summary     = "BXF Tools"
   s.description = "Tooling for BXF binary operations"
-  s.authors     = ["Rafael Soto"]
+  s.authors     = [ "Rafael Soto" ]
   s.license     = "Nonstandard"
 
   s.required_ruby_version = ">= 3.1"
 
-  s.files = Dir["lib/**/*", "bin/*", "captcha/*", "credentials.enc", "LICENSE", "README.md"]
+  s.files = Dir["lib/**/*", "bin/bxfpdf", "bin/bxfunar", "bin/bxfunar-*.tar.gz", "captcha/*", "credentials.enc", "LICENSE", "README.md"]
   s.executables << "bxfpdf"
+  s.executables << "bxfunar"
 
-  s.require_paths = ["lib"]
+  s.require_paths = [ "lib" ]
 
   s.add_dependency "base64"
 

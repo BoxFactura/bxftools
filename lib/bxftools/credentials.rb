@@ -37,7 +37,7 @@ module Bxftools
 
     def encryption_key
       # The key is hex-encoded 32 bytes (like Rails)
-      [@key].pack("H*")
+      [ @key ].pack("H*")
     end
 
     def encrypt(plaintext)

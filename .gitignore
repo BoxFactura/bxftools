@@ -2,6 +2,9 @@
 .env
 credentials.json
 bin/bxfpdf-bin
+# unar ships as bxfunar-<suffix>.tar.gz; ignore the dir it expands into on first run
+bin/bxfunar-*
+!bin/bxfunar-*.tar.gz
 *.gem
 pkg/
 tmp/
