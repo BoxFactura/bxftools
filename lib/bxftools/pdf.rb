@@ -159,18 +159,16 @@ module Bxftools
       instance = (@instance ||= Wasmtime::Instance.new(Wasmtime::Store.new(@engine), @module))
       memory = instance.export("memory").to_memory
       pointers = inputs.map { |bytes| write(instance, memory, bytes) }
-      begin
-        status = instance.invoke(name, *pointers.flatten)
-      rescue Wasmtime::Trap => e
-        @instance = nil # unusable after a trap
-        raise EngineError, "El motor no pudo generar el PDF (#{e.message.lines.first.strip})", cause: nil
-      end
+      status = instance.invoke(name, *pointers.flatten)
       output = memory.read(unsigned(instance.invoke("bxfpdf_result_ptr")), instance.invoke("bxfpdf_result_len"))
       instance.invoke("bxfpdf_result_clear")
       pointers.each { |pointer, length| instance.invoke("bxfpdf_free", pointer, length) unless length.zero? }
       raise Error, output.force_encoding(Encoding::UTF_8) unless status.zero?
 
       output
+    rescue Wasmtime::Trap => e # any export can trap, bxfpdf_alloc too when memory runs out
+      @instance = nil # unusable after a trap
+      raise EngineError, "El motor no pudo generar el PDF (#{e.message.lines.first.strip})", cause: nil
     end
 
     def write(instance, memory, bytes)
