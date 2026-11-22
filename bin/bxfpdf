@@ -1,12 +1,75 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
+# bxfpdf: CFDI XML → PDF with Bxftools::Pdf (WebAssembly), the same interface as the bxfpdf CLI.
+#
+#   bxfpdf <input.xml> [input2.xml …]          writes input.pdf next to each XML
+#   bxfpdf -i <input.xml> -o <output.pdf>
+#     --brand <bxf|neocfdi>   logo + footer brand
+#     --logo <image>          custom logo instead of the bundled one (PNG, JPEG, GIF, WebP, SVG)
+#
+# Every input gets its PDF: one that cannot be rendered (bad XML, missing file or key, an engine
+# failure) gets a blank page instead. Progress and errors go to stderr; the exit status is 1 when
+# a document fails.
 require "bxftools"
 
-path = Bxftools::BinaryManager.ensure_binary!
+USAGE = "Uso: bxfpdf <input.xml> [input2.xml …]\n" \
+        "      bxfpdf -i <input.xml> -o <output.pdf> [--brand bxf|neocfdi] [--logo imagen]"
 
-unless path
-  warn "[bxftools] bxfpdf binary not available"
+inputs = []
+output = brand = logo_path = nil
+args = ARGV.dup
+while (arg = args.shift)
+  case arg
+  when "-i", "--input" then inputs << args.shift unless args.empty?
+  when "-o", "--output" then output = args.shift
+  when "--brand" then brand = args.shift
+  when "--logo" then logo_path = args.shift
+  when /\A-/ then warn "Opción desconocida: #{arg}"
+  else inputs << arg
+  end
+end
+
+if inputs.empty?
+  warn USAGE
+  exit 1
+end
+if output && inputs.size > 1
+  warn "Error: --output solo se puede usar con un archivo de entrada"
   exit 1
 end
 
-exec(path, *ARGV)
+def target_for(input, output) = output || "#{input.sub(/\.xml\z/i, '')}.pdf"
+
+# A blank page at `target` in place of the document `input` could not become, reported with why.
+def write_blank(input, target, error)
+  File.binwrite(target, Bxftools::Pdf.blank)
+  warn "#{input}: #{error} (PDF en blanco: #{target})"
+rescue SystemCallError => e
+  warn "#{input}: #{error} (tampoco se pudo escribir #{target}: #{e.message})"
+end
+
+begin
+  logo = File.binread(logo_path) if logo_path
+  pdf = Bxftools::Pdf.new
+rescue SystemCallError => e
+  inputs.each { |input| write_blank(input, target_for(input, output), "#{logo_path}: #{e.message}") }
+  exit 1
+rescue Bxftools::Error => e
+  inputs.each { |input| write_blank(input, target_for(input, output), e.message) }
+  exit 1
+end
+
+failed = false
+inputs.each do |input|
+  target = target_for(input, output)
+  started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+  begin
+    File.binwrite(target, pdf.render(File.binread(input), brand: brand, logo: logo))
+    warn format("%s -> %s (%.1f ms)", input, target, (Process.clock_gettime(Process::CLOCK_MONOTONIC) - started) * 1000)
+  rescue Bxftools::Pdf::Error, SystemCallError => e # EngineError (the engine failed) is a Pdf::Error
+    write_blank(input, target, e.message)
+    failed = true
+  end
+end
+exit(1) if failed

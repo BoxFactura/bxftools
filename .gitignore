@@ -1,7 +1,7 @@
-# sublex: ignore next 2
+# sublex: ignore next 1
 .env
-credentials.json
-bin/bxfpdf-bin
+# bxfpdf ships as lib/bxftools/bxfpdf.wasm.enc (rake pdf:import); never the plain module
+lib/**/*.wasm
 # unar ships as bxfunar-<suffix>.tar.gz; ignore the dir it expands into on first run
 bin/bxfunar-*
 !bin/bxfunar-*.tar.gz

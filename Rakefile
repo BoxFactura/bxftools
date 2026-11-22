@@ -16,38 +16,24 @@ namespace :unar do
   end
 end
 
-namespace :credentials do
-  desc "Generate a new encryption key (save this securely, share via BXFTOOLS_KEY env var)"
-  task :generate_key do
+namespace :pdf do
+  desc "Encrypt a bxfpdf.wasm (from wasm-pdfgen) with BXFTOOLS_KEY into lib/bxftools/bxfpdf.wasm.enc"
+  task :import, [ :wasm ] do |_, args|
+    require_relative "lib/bxftools"
+    abort 'Usage: rake "pdf:import[path/to/bxfpdf.wasm]"' unless args[:wasm]
+
+    encrypted = Bxftools::Cipher.encrypt(File.binread(args[:wasm]), ENV[Bxftools::Cipher::ENV_KEY])
+    File.binwrite(Bxftools::Pdf::ENCRYPTED_PATH, encrypted)
+    puts "#{args[:wasm]} -> #{Bxftools::Pdf::ENCRYPTED_PATH}"
+  rescue Bxftools::Error => e
+    abort e.message
+  end
+end
+
+namespace :key do
+  desc "Generate a new BXFTOOLS_KEY (re-import the module with it, and set it where the gem runs)"
+  task :generate do
     require "securerandom"
-    key = SecureRandom.hex(32)
-    puts "Generated key (64 hex chars):"
-    puts key
-    puts
-    puts "Set this as BXFTOOLS_KEY in the host app's environment."
-    puts "Keep it secret. The encrypted credentials file is useless without it."
-  end
-
-  desc "Encrypt credentials from credentials.json using BXFTOOLS_KEY"
-  task :encrypt do
-    require_relative "lib/bxftools"
-    json_path = File.expand_path("credentials.json", __dir__)
-
-    unless File.exist?(json_path)
-      abort "Create credentials.json first with {\"binary_url\": \"...\", \"binary_name\": \"...\"}"
-    end
-
-    key = ENV["BXFTOOLS_KEY"]
-    abort "Set BXFTOOLS_KEY env var" unless key
-
-    Bxftools::Credentials.write(File.read(json_path), key)
-    puts "Encrypted credentials.json -> credentials.enc"
-    puts "You can now safely commit credentials.enc and delete credentials.json"
-  end
-
-  desc "Decrypt and display credentials (requires BXFTOOLS_KEY)"
-  task :decrypt do
-    require_relative "lib/bxftools"
-    puts Bxftools::Credentials.read
+    puts SecureRandom.hex(32)
   end
 end

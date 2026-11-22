@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cfdi:Comprobante xmlns:cfdi="http://www.sat.gob.mx/cfd/4" Version="4.0" Serie="IJ" Folio="1936" Fecha="1936-06-12T10:00:00" FormaPago="03" SubTotal="7740.00" Moneda="MXN" Total="8978.40" TipoDeComprobante="I" Exportacion="01" MetodoPago="PUE" LugarExpedicion="06700" NoCertificado="00001000000500001936" Sello="RaIdErSoFtHeLoStArKmArIoNrAvEnWoOdSaLlAh=">
+  <cfdi:Emisor Rfc="MBA360612AB1" Nombre="MARCUS BRODY ANTIGÜEDADES" RegimenFiscal="601"/>
+  <cfdi:Receptor Rfc="JOJH990701IJ3" Nombre="HENRY WALTON JONES JR" DomicilioFiscalReceptor="06700" RegimenFiscalReceptor="612" UsoCFDI="G03"/>
+  <cfdi:Conceptos>
+    <cfdi:Concepto ClaveProdServ="60141000" NoIdentificacion="IDOLO-1936" Cantidad="1" ClaveUnidad="H87" Unidad="Pieza" Descripcion="Ídolo de oro de los Chachapoyas" ValorUnitario="5000.00" Importe="5000.00" ObjetoImp="02">
+      <cfdi:Impuestos><cfdi:Traslados><cfdi:Traslado Base="5000.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="800.00"/></cfdi:Traslados></cfdi:Impuestos>
+    </cfdi:Concepto>
+    <cfdi:Concepto ClaveProdServ="60141000" NoIdentificacion="CRUZ-1912" Cantidad="1" ClaveUnidad="H87" Unidad="Pieza" Descripcion="Cruz de Coronado" ValorUnitario="2000.00" Importe="2000.00" ObjetoImp="02">
+      <cfdi:Impuestos><cfdi:Traslados><cfdi:Traslado Base="2000.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="320.00"/></cfdi:Traslados></cfdi:Impuestos>
+    </cfdi:Concepto>
+    <cfdi:Concepto ClaveProdServ="53101900" NoIdentificacion="LATIGO-1" Cantidad="1" ClaveUnidad="H87" Unidad="Pieza" Descripcion="Látigo de cuero" ValorUnitario="450.00" Importe="450.00" ObjetoImp="02">
+      <cfdi:Impuestos><cfdi:Traslados><cfdi:Traslado Base="450.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="72.00"/></cfdi:Traslados></cfdi:Impuestos>
+    </cfdi:Concepto>
+    <cfdi:Concepto ClaveProdServ="53102500" NoIdentificacion="FEDORA-1" Cantidad="1" ClaveUnidad="H87" Unidad="Pieza" Descripcion="Sombrero fedora" ValorUnitario="290.00" Importe="290.00" ObjetoImp="02">
+      <cfdi:Impuestos><cfdi:Traslados><cfdi:Traslado Base="290.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="46.40"/></cfdi:Traslados></cfdi:Impuestos>
+    </cfdi:Concepto>
+  </cfdi:Conceptos>
+  <cfdi:Impuestos TotalImpuestosTrasladados="1238.40"><cfdi:Traslados><cfdi:Traslado Base="7740.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="1238.40"/></cfdi:Traslados></cfdi:Impuestos>
+  <cfdi:Complemento>
+    <tfd:TimbreFiscalDigital xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital" Version="1.1" UUID="1936A0B1-0612-4E85-9C21-000000001936" FechaTimbrado="1936-06-12T10:05:00" RfcProvCertif="SAT970701NN3" SelloCFD="RaIdErSoFtHeLoStArKmArIoNrAvEnWoOdSaLlAh=" NoCertificadoSAT="00001000000504465028" SelloSAT="TeMpLeOfDoOmKaLiMaShAnKaRaStOnEsMoLaRaM="/>
+  </cfdi:Complemento>
+</cfdi:Comprobante>
